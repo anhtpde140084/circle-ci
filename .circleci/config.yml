@@ -1,0 +1,42 @@
+version: '2.1'
+orbs:
+# Cài đặt các công cụ
+  node: circleci/node@3.0.0
+  docker: circleci/docker@1.4.0
+jobs:
+# Custom các jobs
+  build-and-push: #Đặt tên job
+    environment: #Tạo biến global
+      DOCKER_IMAGE: phianhdev/react-docker
+      DOCKER_TAG: lastest  
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check:
+          docker-username: DOCKER_USER
+          docker-password: DOCKER_PASSWORD
+      - docker/build:
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG  
+      - docker/push:
+          digest-path: /tmp/digest.txt
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
+  # Tương tự các job khác
+workflows:
+  my-pipeline: #Đặt tên workflows và chạy job nào
+    jobs:
+      - node/test
+      - build-and-push:
+      # Muốn merged vào master thì mới build
+      # Require test được đã, tui chỉ chạy khi đã test xong
+          requires:
+            - node/test
+          filters:
+            branches:
+              only:
+                - main
