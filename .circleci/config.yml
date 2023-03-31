@@ -13,7 +13,7 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
-      - docker/check
+      - docker/check:
           docker-username: DOCKER_USER
           docker-password: DOCKER_PASSWORD
       - docker/build:
@@ -31,12 +31,12 @@ workflows:
   test-build-deploy: #Đặt tên workflows và chạy job nào
     jobs:
       - node/test
-      - build-and-push
+      - build-and-push:
       # Muốn merged vào master thì mới build
+      # Require test được đã, tui chỉ chạy khi đã test xong
+          requires:
+            - node/test
           filter:
-            # Require test được đã, tui chỉ chạy khi đã test xong
-            requires:
-              - node/test
             branches:
               only:
                 - main
