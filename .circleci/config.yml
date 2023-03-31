@@ -28,7 +28,7 @@ jobs:
             echo "Digest is: $(</tmp/digest.txt)"
   # Tương tự các job khác
 workflows:
-  test-build-deploy: #Đặt tên workflows và chạy job nào
+  my-pipeline: #Đặt tên workflows và chạy job nào
     jobs:
       - node/test
       - build-and-push:
@@ -36,7 +36,7 @@ workflows:
       # Require test được đã, tui chỉ chạy khi đã test xong
           requires:
             - node/test
-          filter:
+          filters:
             branches:
               only:
                 - main
