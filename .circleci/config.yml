@@ -27,6 +27,14 @@ jobs:
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
   # Tương tự các job khác
+  deploy:
+    executor: docker/docker
+    steps:
+       - add_ssh_keys:
+          fingerprints:
+            - "e3:71:13:a2:f2:61:d4:58:7f:b2:f5:f7:6e:a7:de:18"
+      - run: ssh -oStrictHostKeyChecking=no circleci@144.91.104.7 '/usr/projects/circle-ci/deploy.sh'
+        
 workflows:
   my-pipeline: #Đặt tên workflows và chạy job nào
     jobs:
@@ -40,3 +48,6 @@ workflows:
             branches:
               only:
                 - main
+       - deploy:
+          requires:
+            - build-and-push
