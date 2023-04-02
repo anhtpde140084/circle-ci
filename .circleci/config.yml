@@ -7,7 +7,7 @@ jobs:
 # Custom các jobs
   build-and-push: #Đặt tên job
     environment: #Tạo biến global
-      DOCKER_IMAGE: phianhdev/docker-react
+      DOCKER_IMAGE: phianhdev/react-docker
       DOCKER_TAG: lastest  
     executor: docker/docker
     steps:
