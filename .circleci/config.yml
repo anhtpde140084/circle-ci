@@ -33,7 +33,7 @@ jobs:
        - add_ssh_keys:
            fingerprints:
              - "e5:3b:61:88:e7:e3:5b:17:7d:76:e0:d1:a3:22:07:c6"
-       - run: ssh -oStrictHostKeyChecking=no circleci@144.91.104.7 './deploy.sh'
+       - run: ssh -vvv -oStrictHostKeyChecking=no circleci@144.91.104.7 '/usr/projects/circle-ci/deploy.sh'
         
 workflows:
   my-pipeline: #Đặt tên workflows và chạy job nào
