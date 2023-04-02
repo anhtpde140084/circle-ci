@@ -7,7 +7,7 @@ jobs:
 # Custom các jobs
   build-and-push: #Đặt tên job
     environment: #Tạo biến global
-      DOCKER_IMAGE: phianhdev/react-docker
+      DOCKER_IMAGE: phianhdev/docker-react
       DOCKER_TAG: lastest  
     executor: docker/docker
     steps:
@@ -31,8 +31,8 @@ jobs:
     executor: docker/docker
     steps:
        - add_ssh_keys:
-          fingerprints:
-            - "e5:3b:61:88:e7:e3:5b:17:7d:76:e0:d1:a3:22:07:c6"
+           fingerprints:
+             - "e5:3b:61:88:e7:e3:5b:17:7d:76:e0:d1:a3:22:07:c6"
       - run: ssh -oStrictHostKeyChecking=no circleci@144.91.104.7 '/usr/projects/circle-ci/deploy.sh'
         
 workflows:
