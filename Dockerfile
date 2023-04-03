@@ -1,9 +1,23 @@
-FROM node:14-stretch-slim as build
-WORKDIR /app
-# COPY BEN NGOAI VAO CONTAINER 
-COPY . /app
-RUN npm install && npm run build
+# Sử dụng image node version 14
+FROM node:14 AS builder
 
-# Chayj ban da build
-FROM nginx
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+FROM nginx:latest
+
+COPY nginx.conf /etc/nginx/nginx.conf
+
+COPY --from=builder /app/build /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+
