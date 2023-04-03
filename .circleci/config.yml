@@ -28,13 +28,19 @@ jobs:
             echo "Digest is: $(</tmp/digest.txt)"
   # Tương tự các job khác
   deploy:
-    machine:
-       enabled: true
+    executor: docker/docker
     steps:
-       - run: 
-           name: Deploy OVER VPS
-           command: |
-           ssh root@144.91.104.7 "cd /usr/projects/Circle-CI && ./deploy.sh"
+      - attach_workspace:
+          at: .
+      - add_ssh_keys:
+          fingerprints:
+            - "e5:3b:61:88:e7:e3:5b:17:7d:76:e0:d1:a3:22:07:c6"
+      - run:
+          name: Install SSH Client
+          command: sudo apt-get install -y ssh
+      - run:
+          name: Deploy to VPS via SSH
+          command: ssh root@144.91.104.7 "bash -s" < deploy.sh
         
 workflows:
   my-pipeline: #Đặt tên workflows và chạy job nào
