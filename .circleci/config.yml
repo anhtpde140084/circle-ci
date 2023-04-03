@@ -28,8 +28,8 @@ jobs:
             echo "Digest is: $(</tmp/digest.txt)"
   # Tương tự các job khác
   deploy:
-  machine:
-      enabled: true
+    machine:
+       enabled: true
     steps:
        - run: 
            name: Deploy OVER VPS
