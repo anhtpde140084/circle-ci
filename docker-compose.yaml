@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   mywebsite:
-    image: phianhdev/docker-react:latest
+    image: phianhdev/react-docker:latest
     container_name: circle-ci-fe
     build: .
     ports:

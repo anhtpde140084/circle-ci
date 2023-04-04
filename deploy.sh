@@ -1,8 +1,8 @@
 cd `dirname $BASH_SOURCE`
 
-docker stop circle-ci-fe
-docker rm circle-ci-fe
-docker pull phianhdev/react-docker:lastest
-docker-compose up -d
+docker-compose stop
+docker-compose rm -f
+docker-compose pull
+docker-compose up -d --build
 
 cd - > /dev/null
