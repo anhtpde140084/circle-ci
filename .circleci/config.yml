@@ -1,52 +1,54 @@
-version: 2.1
-
+version: '2.1'
+orbs:
+# Cài đặt các công cụ
+  node: circleci/node@3.0.0
+  docker: circleci/docker@1.4.0
 jobs:
-  build:
-    docker:
-      - image: circleci/node:14
-
+# Custom các jobs
+  build-and-push: #Đặt tên job
+    environment: #Tạo biến global
+      DOCKER_IMAGE: phianhdev/react-docker
+      DOCKER_TAG: lastest  
+    executor: docker/docker
     steps:
-      - checkout
-
-      - run:
-          name: Install Dependencies
-          command: npm install
-
-      - run:
-          name: Build
-          command: npm run build
-
-      - run:
-          name: Build Docker Image
-          command: |
-            docker build -t phianhdev/react-docker:lastest .
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push phianhdev/react-docker:lastest
-
-  deploy:
-    docker:
-      - image: docker:19.03.13
-
-    steps:
-      - checkout
-
       - setup_remote_docker
-      
+      - checkout
+      - docker/check:
+          docker-username: DOCKER_USER
+          docker-password: DOCKER_PASSWORD
+      - docker/build:
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG  
+      - docker/push:
+          digest-path: /tmp/digest.txt
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG
       - run:
-          name: Deploy
           command: |
-            ssh -oStrictHostKeyChecking=no root@144.91.104.7 "cd /usr/projects/Circle-CI && sh -x deploy.sh"   
+            echo "Digest is: $(</tmp/digest.txt)"
+  # Tương tự các job khác
+  deploy:
+    executor: docker/docker
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "e5:3b:61:88:e7:e3:5b:17:7d:76:e0:d1:a3:22:07:c6"
+      - run: 
+          name: Deploy to VPS
+          command: ssh -oStrictHostKeyChecking=no root@144.91.104.7 "cd /usr/projects/Circle-CI && sh -x deploy.sh"    
 workflows:
-  version: 2
-  build-and-deploy:
+  my-pipeline: #Đặt tên workflows và chạy job nào
     jobs:
-      - build:
+      - node/test
+      - build-and-push:
+      # Muốn merged vào master thì mới build
+      # Require test được đã, tui chỉ chạy khi đã test xong
+          requires:
+            - node/test
           filters:
             branches:
-              only: main
+              only:
+                - main
       - deploy:
           requires:
-            - build
-          filters:
-            branches:
-              only: main
+            - build-and-push
