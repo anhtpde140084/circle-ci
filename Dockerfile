@@ -1,5 +1,5 @@
 # Sử dụng image node version 14
-FROM node:14 AS builder
+FROM node:14-alpine AS builder
 
 WORKDIR /app
 
