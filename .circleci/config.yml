@@ -30,17 +30,20 @@ jobs:
   deploy:
     executor: docker/docker
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "e5:3b:61:88:e7:e3:5b:17:7d:76:e0:d1:a3:22:07:c6"
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
       - run:
           name: Pull latest image
           command: |
-            docker pull phianhdev/react-docker:lastest
+             docker pull phianhdev/react-docker:lastest
       - run:
           name: Run the app
           command: |
-            docker-compose up -d   
+            docker-compose up -d
 workflows:
   my-pipeline: #Đặt tên workflows và chạy job nào
     jobs:
